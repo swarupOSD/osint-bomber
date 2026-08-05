@@ -3,6 +3,7 @@ import requests
 import concurrent.futures
 from colorama import Fore, Style, init
 from sites import SITES
+from urllib.parse import quote
 
 init(autoreset=True)
 
@@ -14,7 +15,19 @@ class OSINTSanner:
 
     def check_site(self, site_name, url_template):
         """Check if a profile exists on a specific site"""
-        url = url_template.format(self.username)
+        # ইউজারনেম এনকোড করা (স্পেস ও বিশেষ ক্যারেক্টার হ্যান্ডেল করতে)
+        encoded_username = quote(self.username, safe='')
+        
+        # URL-এ { } এর সংখ্যা চেক করে সঠিকভাবে ফরম্যাট করা
+        try:
+            if url_template.count('{}') == 1:
+                url = url_template.format(encoded_username)
+            else:
+                # একাধিক {} থাকলে সব জায়গায় ইউজারনেম বসানো
+                url = url_template.replace('{}', encoded_username)
+        except Exception:
+            return site_name, False, url_template
+        
         try:
             resp = requests.get(url, timeout=5, headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -26,7 +39,7 @@ class OSINTSanner:
                 not_found_keywords = [
                     'not found', 'does not exist', 'page not found', 
                     'sorry, this page', 'account not found', 'user not found',
-                    'no results found', 'profile not available'
+                    'no results found', 'profile not available', '404'
                 ]
                 for keyword in not_found_keywords:
                     if keyword in content:
