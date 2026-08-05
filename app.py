@@ -657,7 +657,7 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
     
-    # ===== FILE UPLOAD SECTION (Feature 8) =====
+    # ===== FILE UPLOAD SECTION =====
     with st.expander("📂 " + T['file_upload']):
         uploaded_file = st.file_uploader(
             T['file_upload_help'],
@@ -706,7 +706,6 @@ def run_scan(username, email="", lang="English"):
     T = LANGUAGES[lang]
     
     os.makedirs("output", exist_ok=True)
-    os.makedirs("output/qr_codes", exist_ok=True)
     
     start_time = time.time()
     
@@ -860,11 +859,32 @@ def run_scan(username, email="", lang="English"):
         for site, url in results.items():
             if count >= 10:
                 break
-            qr_bytes = qr_gen.generate_qr(url)  # Returns bytes directly
-            qr_items.append((site, qr_bytes))
+            # generate_qr() now returns PIL Image
+            qr_img = qr_gen.generate_qr(url)
+            # get_qr_bytes() for download
+            qr_bytes = qr_gen.get_qr_bytes(url)
+            qr_items.append((site, qr_img, qr_bytes))
             count += 1
         
         add_log(f"Generated {len(qr_items)} QR codes", "success")
+        
+        # QR Codes Display
+        st.markdown(f"### {T['qr_codes']}")
+        if qr_items:
+            qr_cols = st.columns(min(5, len(qr_items)))
+            for idx, (site, qr_img, qr_bytes) in enumerate(qr_items):
+                with qr_cols[idx % 5]:
+                    st.markdown(f"**{site}**")
+                    st.image(qr_img, use_container_width=True)  # PIL Image works
+                    st.download_button(
+                        label="📥 QR",
+                        data=qr_bytes,
+                        file_name=f"qr_{username}_{site}.png",
+                        mime="image/png",
+                        use_container_width=True
+                    )
+        else:
+            st.info("No QR codes generated")
         
         # Analytics
         add_log("Generating analytics...", "info")
@@ -952,24 +972,6 @@ def run_scan(username, email="", lang="English"):
                     st.plotly_chart(fig_map, use_container_width=True)
                 else:
                     st.info("🌍 No GeoIP data available")
-        
-        # ===== QR CODES DISPLAY (UPDATED) =====
-        st.markdown(f"### {T['qr_codes']}")
-        if qr_items:
-            qr_cols = st.columns(min(5, len(qr_items)))
-            for idx, (site, qr_bytes) in enumerate(qr_items):
-                with qr_cols[idx % 5]:
-                    st.markdown(f"**{site}**")
-                    st.image(qr_bytes, use_container_width=True)
-                    st.download_button(
-                        label="📥 QR",
-                        data=qr_bytes,
-                        file_name=f"qr_{username}_{site}.png",
-                        mime="image/png",
-                        use_container_width=True
-                    )
-        else:
-            st.info("No QR codes generated")
         
         # Download Options
         st.markdown(f"### {T['download_export']}")
