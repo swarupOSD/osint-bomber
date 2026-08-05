@@ -848,23 +848,23 @@ def run_scan(username, email="", lang="English"):
             pdf_bytes = None
             add_log("PDF generation failed", "error")
         
-        # QR Codes
+        # ===== QR CODES (UPDATED - In-Memory) =====
         add_log("Generating QR codes...", "info")
         progress_text.text(T['generating_qr'])
         progress_bar.progress(80)
         
         qr_gen = QRGenerator()
-        qr_codes = {}
+        qr_items = []
         count = 0
+        
         for site, url in results.items():
             if count >= 10:
                 break
-            qr_path = f"output/qr_codes/{username}_{site}_qr.png"
-            qr_gen.generate_qr(url, qr_path)
-            qr_codes[site] = qr_path
+            qr_bytes = qr_gen.generate_qr(url)  # Returns bytes directly
+            qr_items.append((site, qr_bytes))
             count += 1
         
-        add_log(f"Generated {len(qr_codes)} QR codes", "success")
+        add_log(f"Generated {len(qr_items)} QR codes", "success")
         
         # Analytics
         add_log("Generating analytics...", "info")
@@ -953,22 +953,23 @@ def run_scan(username, email="", lang="English"):
                 else:
                     st.info("🌍 No GeoIP data available")
         
-        # QR Codes
+        # ===== QR CODES DISPLAY (UPDATED) =====
         st.markdown(f"### {T['qr_codes']}")
-        qr_cols = st.columns(5)
-        for idx, (site, qr_path) in enumerate(qr_codes.items()):
-            with qr_cols[idx % 5]:
-                st.markdown(f"**{site}**")
-                st.image(qr_path, use_container_width=True)
-                with open(qr_path, "rb") as f:
-                    qr_bytes = f.read()
+        if qr_items:
+            qr_cols = st.columns(min(5, len(qr_items)))
+            for idx, (site, qr_bytes) in enumerate(qr_items):
+                with qr_cols[idx % 5]:
+                    st.markdown(f"**{site}**")
+                    st.image(qr_bytes, use_container_width=True)
                     st.download_button(
-                        label=f"📥 QR",
+                        label="📥 QR",
                         data=qr_bytes,
                         file_name=f"qr_{username}_{site}.png",
                         mime="image/png",
                         use_container_width=True
                     )
+        else:
+            st.info("No QR codes generated")
         
         # Download Options
         st.markdown(f"### {T['download_export']}")
