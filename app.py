@@ -4,7 +4,6 @@ from scanner import OSINTSanner
 from hibp_checker import HIBPChecker
 from pdf_generator import PDFReport
 from geoip_checker import GeoIPChecker
-from qr_generator import QRGenerator
 import time
 import os
 import pyperclip
@@ -15,7 +14,6 @@ import sqlite3
 import json
 import zipfile
 import io
-import numpy as np
 
 # ========== PAGE CONFIGURATION ==========
 st.set_page_config(
@@ -30,7 +28,7 @@ LANGUAGES = {
     "English": {
         "title": "OSINT BOMBER",
         "subtitle": "Professional OSINT Intelligence Tool",
-        "tagline": "⚡ 1000+ Platforms • Real-time Analytics • GeoIP • QR Codes",
+        "tagline": "⚡ 1000+ Platforms • Real-time Analytics • GeoIP",
         "warning": "⚠️ WARNING: This tool is for checking YOUR OWN accounts only!\nScanning others without permission is ILLEGAL!",
         "enter_details": "🔎 Enter Details",
         "username": "👤 Username",
@@ -45,7 +43,6 @@ LANGUAGES = {
         "analytics": "📊 Analytics Dashboard",
         "platform_dist": "📈 Platform Distribution",
         "geoip": "🌍 GeoIP Map",
-        "qr_codes": "📱 QR Codes (First 10 Profiles)",
         "download_export": "📥 Download & Export",
         "pdf": "📄 PDF",
         "pdf_caption": "Professional PDF Report",
@@ -78,13 +75,12 @@ LANGUAGES = {
         "checking_email": "Checking email...",
         "fetching_geoip": "Fetching GeoIP data...",
         "generating_reports": "Generating reports...",
-        "generating_qr": "Generating QR codes...",
         "generating_analytics": "Generating analytics..."
     },
     "বাংলা": {
         "title": "ওএসআইএনটি বোম্বার",
         "subtitle": "পেশাদার ওএসআইএনটি ইন্টেলিজেন্স টুল",
-        "tagline": "⚡ ১০০০+ প্ল্যাটফর্ম • রিয়েল-টাইম অ্যানালিটিক্স • জিওআইপি • কিউআর কোড",
+        "tagline": "⚡ ১০০০+ প্ল্যাটফর্ম • রিয়েল-টাইম অ্যানালিটিক্স • জিওআইপি",
         "warning": "⚠️ সতর্কতা: এই টুল শুধু আপনার নিজের অ্যাকাউন্ট চেক করার জন্য!\nঅন্যের অনুমতি ছাড়া স্ক্যান করা বেআইনি!",
         "enter_details": "🔎 বিস্তারিত দিন",
         "username": "👤 ইউজারনেম",
@@ -99,7 +95,6 @@ LANGUAGES = {
         "analytics": "📊 অ্যানালিটিক্স ড্যাশবোর্ড",
         "platform_dist": "📈 প্ল্যাটফর্ম বিতরণ",
         "geoip": "🌍 জিওআইপি ম্যাপ",
-        "qr_codes": "📱 কিউআর কোড (প্রথম ১০টি প্রোফাইল)",
         "download_export": "📥 ডাউনলোড ও এক্সপোর্ট",
         "pdf": "📄 পিডিএফ",
         "pdf_caption": "পেশাদার পিডিএফ রিপোর্ট",
@@ -132,13 +127,12 @@ LANGUAGES = {
         "checking_email": "ইমেইল চেক করা হচ্ছে...",
         "fetching_geoip": "জিওআইপি ডেটা সংগ্রহ...",
         "generating_reports": "রিপোর্ট তৈরি...",
-        "generating_qr": "কিউআর কোড তৈরি...",
         "generating_analytics": "অ্যানালিটিক্স তৈরি..."
     },
     "हिंदी": {
         "title": "ओएसआईएनटी बॉम्बर",
         "subtitle": "प्रोफेशनल ओएसआईएनटी इंटेलिजेंस टूल",
-        "tagline": "⚡ 1000+ प्लेटफॉर्म • रियल-टाइम एनालिटिक्स • जियोआईपी • क्यूआर कोड",
+        "tagline": "⚡ 1000+ प्लेटफॉर्म • रियल-टाइम एनालिटिक्स • जियोआईपी",
         "warning": "⚠️ चेतावनी: यह टूल केवल आपके अपने खातों की जाँच के लिए है!\nदूसरों की अनुमति के बिना स्कैन करना अवैध है!",
         "enter_details": "🔎 विवरण दर्ज करें",
         "username": "👤 यूजरनेम",
@@ -153,7 +147,6 @@ LANGUAGES = {
         "analytics": "📊 एनालिटिक्स डैशबोर्ड",
         "platform_dist": "📈 प्लेटफॉर्म वितरण",
         "geoip": "🌍 जियोआईपी मैप",
-        "qr_codes": "📱 क्यूआर कोड (पहले 10 प्रोफाइल)",
         "download_export": "📥 डाउनलोड और एक्सपोर्ट",
         "pdf": "📄 पीडीएफ",
         "pdf_caption": "प्रोफेशनल पीडीएफ रिपोर्ट",
@@ -186,7 +179,6 @@ LANGUAGES = {
         "checking_email": "ईमेल जाँच...",
         "fetching_geoip": "जियोआईपी डेटा प्राप्त...",
         "generating_reports": "रिपोर्ट तैयार...",
-        "generating_qr": "क्यूआर कोड तैयार...",
         "generating_analytics": "एनालिटिक्स तैयार..."
     }
 }
@@ -529,20 +521,6 @@ st.markdown("""
         background: rgba(0, 212, 255, 0.02) !important;
     }
     
-    .qr-container {
-        background: rgba(255, 255, 255, 0.02);
-        backdrop-filter: blur(8px);
-        padding: 1rem;
-        border-radius: 16px;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        transition: 0.3s ease;
-    }
-    .qr-container:hover {
-        border-color: rgba(0, 212, 255, 0.15);
-        box-shadow: 0 4px 30px rgba(0, 212, 255, 0.04);
-    }
-    
     .sidebar-title {
         color: #666;
         font-size: 0.75rem;
@@ -651,7 +629,6 @@ with st.sidebar:
         ("🔍", "1000+ Platforms"),
         ("📊", "Real-time Analytics"),
         ("🌍", "GeoIP Location"),
-        ("📱", "QR Code Generator"),
         ("📄", "PDF/TXT/CSV Export"),
         ("📋", "Copy to Clipboard"),
         ("💾", "Scan History"),
@@ -757,7 +734,7 @@ def run_scan(username, email="", lang="English"):
     results = {}
     logs = []
     total_found = 0
-    total_sites = 1000  # FIXED: সরাসরি ১০০০ সেট করা হয়েছে
+    total_sites = 1000
     
     with log_container:
         st.markdown(f"""
@@ -881,46 +858,6 @@ def run_scan(username, email="", lang="English"):
             st.warning(f"⚠️ PDF generation error: {str(e)}")
             pdf_bytes = None
             add_log("PDF generation failed", "error")
-        
-        # ===== QR CODES (FIXED) =====
-        add_log("Generating QR codes...", "info")
-        progress_text.text(T['generating_qr'])
-        progress_bar.progress(80)
-        
-        qr_gen = QRGenerator()
-        qr_items = []
-        count = 0
-        
-        for site, url in results.items():
-            if count >= 10:
-                break
-            try:
-                qr_img = qr_gen.generate_qr(url)  # numpy array for st.image
-                qr_bytes = qr_gen.get_qr_bytes(url)  # bytes for download
-                qr_items.append((site, qr_img, qr_bytes))
-                count += 1
-            except Exception as e:
-                add_log(f"QR generation failed for {site}: {str(e)}", "warning")
-        
-        add_log(f"Generated {len(qr_items)} QR codes", "success")
-        
-        # QR Codes Display
-        st.markdown(f"### {T['qr_codes']}")
-        if qr_items:
-            qr_cols = st.columns(min(5, len(qr_items)))
-            for idx, (site, qr_img, qr_bytes) in enumerate(qr_items):
-                with qr_cols[idx % 5]:
-                    st.markdown(f"**{site}**")
-                    st.image(qr_img, use_container_width=True)
-                    st.download_button(
-                        label="📥 QR",
-                        data=qr_bytes,
-                        file_name=f"qr_{username}_{site}.png",
-                        mime="image/png",
-                        use_container_width=True
-                    )
-        else:
-            st.info("No QR codes generated")
         
         # Analytics
         add_log("Generating analytics...", "info")
