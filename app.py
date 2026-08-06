@@ -15,18 +15,27 @@ import sqlite3
 import json
 import zipfile
 import io
+import numpy as np
+
+# ========== PAGE CONFIGURATION ==========
+st.set_page_config(
+    page_title="OSINT Bomber - 1000+ Site Scanner",
+    page_icon="🕵️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 # ========== LANGUAGE DICTIONARY ==========
 LANGUAGES = {
     "English": {
         "title": "OSINT BOMBER",
         "subtitle": "Professional OSINT Intelligence Tool",
-        "tagline": "⚡ 50+ Platforms • Real-time Analytics • GeoIP • QR Codes",
+        "tagline": "⚡ 1000+ Platforms • Real-time Analytics • GeoIP • QR Codes",
         "warning": "⚠️ WARNING: This tool is for checking YOUR OWN accounts only!\nScanning others without permission is ILLEGAL!",
         "enter_details": "🔎 Enter Details",
         "username": "👤 Username",
         "username_placeholder": "e.g., elonmusk, john_doe",
-        "username_help": "Enter any username to search across 50+ platforms",
+        "username_help": "Enter any username to search across 1000+ platforms",
         "email": "📧 Email (optional)",
         "email_placeholder": "your_email@example.com",
         "email_help": "Check if your email was in any data breaches",
@@ -63,7 +72,7 @@ LANGUAGES = {
         "file_upload": "📂 Upload File (TXT/CSV)",
         "file_upload_help": "Upload a file with multiple usernames (one per line)",
         "or": "OR",
-        "scanning": "Scanning...",
+        "scanning": "Scanning 1000+ sites...",
         "initializing": "Initializing...",
         "processing": "Processing results...",
         "checking_email": "Checking email...",
@@ -75,12 +84,12 @@ LANGUAGES = {
     "বাংলা": {
         "title": "ওএসআইএনটি বোম্বার",
         "subtitle": "পেশাদার ওএসআইএনটি ইন্টেলিজেন্স টুল",
-        "tagline": "⚡ ৫০+ প্ল্যাটফর্ম • রিয়েল-টাইম অ্যানালিটিক্স • জিওআইপি • কিউআর কোড",
+        "tagline": "⚡ ১০০০+ প্ল্যাটফর্ম • রিয়েল-টাইম অ্যানালিটিক্স • জিওআইপি • কিউআর কোড",
         "warning": "⚠️ সতর্কতা: এই টুল শুধু আপনার নিজের অ্যাকাউন্ট চেক করার জন্য!\nঅন্যের অনুমতি ছাড়া স্ক্যান করা বেআইনি!",
         "enter_details": "🔎 বিস্তারিত দিন",
         "username": "👤 ইউজারনেম",
         "username_placeholder": "যেমন: elonmusk, john_doe",
-        "username_help": "৫০+ প্ল্যাটফর্মে সার্চ করতে ইউজারনেম দিন",
+        "username_help": "১০০০+ প্ল্যাটফর্মে সার্চ করতে ইউজারনেম দিন",
         "email": "📧 ইমেইল (ঐচ্ছিক)",
         "email_placeholder": "আপনার_ইমেইল@example.com",
         "email_help": "আপনার ইমেইল ডেটা লিকে আছে কিনা চেক করুন",
@@ -117,7 +126,7 @@ LANGUAGES = {
         "file_upload": "📂 ফাইল আপলোড করুন (TXT/CSV)",
         "file_upload_help": "একাধিক ইউজারনেম সম্বলিত ফাইল আপলোড করুন (প্রতি লাইনে একটি)",
         "or": "অথবা",
-        "scanning": "স্ক্যান হচ্ছে...",
+        "scanning": "১০০০+ সাইট স্ক্যান হচ্ছে...",
         "initializing": "চালু হচ্ছে...",
         "processing": "ফলাফল প্রক্রিয়াকরণ...",
         "checking_email": "ইমেইল চেক করা হচ্ছে...",
@@ -129,12 +138,12 @@ LANGUAGES = {
     "हिंदी": {
         "title": "ओएसआईएनटी बॉम्बर",
         "subtitle": "प्रोफेशनल ओएसआईएनटी इंटेलिजेंस टूल",
-        "tagline": "⚡ 50+ प्लेटफॉर्म • रियल-टाइम एनालिटिक्स • जियोआईपी • क्यूआर कोड",
+        "tagline": "⚡ 1000+ प्लेटफॉर्म • रियल-टाइम एनालिटिक्स • जियोआईपी • क्यूआर कोड",
         "warning": "⚠️ चेतावनी: यह टूल केवल आपके अपने खातों की जाँच के लिए है!\nदूसरों की अनुमति के बिना स्कैन करना अवैध है!",
         "enter_details": "🔎 विवरण दर्ज करें",
         "username": "👤 यूजरनेम",
         "username_placeholder": "जैसे: elonmusk, john_doe",
-        "username_help": "50+ प्लेटफॉर्म पर खोजने के लिए यूजरनेम दर्ज करें",
+        "username_help": "1000+ प्लेटफॉर्म पर खोजने के लिए यूजरनेम दर्ज करें",
         "email": "📧 ईमेल (वैकल्पिक)",
         "email_placeholder": "आपका_ईमेल@example.com",
         "email_help": "जाँच करें कि आपका ईमेल किसी डेटा लीक में तो नहीं है",
@@ -171,7 +180,7 @@ LANGUAGES = {
         "file_upload": "📂 फ़ाइल अपलोड करें (TXT/CSV)",
         "file_upload_help": "कई यूजरनेम वाली फ़ाइल अपलोड करें (प्रति पंक्ति एक)",
         "or": "या",
-        "scanning": "स्कैन हो रहा है...",
+        "scanning": "1000+ साइट स्कैन हो रहा है...",
         "initializing": "प्रारंभ हो रहा है...",
         "processing": "परिणाम संसाधित...",
         "checking_email": "ईमेल जाँच...",
@@ -182,17 +191,8 @@ LANGUAGES = {
     }
 }
 
-# ========== PAGE CONFIGURATION ==========
-st.set_page_config(
-    page_title="OSINT Bomber - 50+ Site Scanner",
-    page_icon="🕵️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
 # ========== LANGUAGE SELECTOR ==========
 with st.sidebar:
-    # Language Selector at top of sidebar
     st.markdown("### 🌐 Language")
     lang = st.selectbox(
         "",
@@ -201,8 +201,6 @@ with st.sidebar:
         label_visibility="collapsed"
     )
     st.markdown("---")
-    
-    # Get translation
     T = LANGUAGES[lang]
 
 # ========== DATABASE SETUP ==========
@@ -240,10 +238,12 @@ def get_recent_scans(limit=5):
 
 init_db()
 
-# ========== CUSTOM CSS ==========
+# ========== ADVANCED PROFESSIONAL CSS ==========
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     .stApp {
         background: #0a0a0f;
@@ -254,85 +254,130 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
+    /* Glowing Header */
     .main-header {
-        font-size: 4rem;
+        font-size: 4.2rem;
         font-weight: 900;
         font-family: 'Orbitron', sans-serif;
-        background: linear-gradient(135deg, #00d4ff 0%, #7b2ffc 50%, #ff006e 100%);
+        background: linear-gradient(135deg, #00d4ff 0%, #7b2ffc 40%, #ff006e 80%, #ffd93d 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        padding: 1.5rem 0;
-        text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
-        letter-spacing: 4px;
-        animation: glowPulse 3s ease-in-out infinite;
+        padding: 1.5rem 0 0.5rem 0;
+        text-shadow: 0 0 60px rgba(0, 212, 255, 0.2);
+        letter-spacing: 6px;
+        animation: glowPulse 4s ease-in-out infinite;
+        position: relative;
+    }
+    
+    .main-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00d4ff, #7b2ffc, #ff006e, transparent);
     }
     
     @keyframes glowPulse {
-        0% { text-shadow: 0 0 20px rgba(0, 212, 255, 0.2); }
-        50% { text-shadow: 0 0 60px rgba(123, 47, 252, 0.4); }
-        100% { text-shadow: 0 0 20px rgba(0, 212, 255, 0.2); }
+        0% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.15); }
+        50% { text-shadow: 0 0 70px rgba(123, 47, 252, 0.35), 0 0 100px rgba(255, 0, 110, 0.15); }
+        100% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.15); }
     }
     
     .sub-header {
         text-align: center;
         color: #8888aa;
-        font-size: 1.1rem;
-        letter-spacing: 12px;
+        font-size: 1.2rem;
+        letter-spacing: 14px;
         text-transform: uppercase;
         font-weight: 300;
         margin-top: -0.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         font-family: 'Orbitron', sans-serif;
+        opacity: 0.8;
     }
     
     .tagline {
         text-align: center;
         color: #556;
-        font-size: 0.9rem;
-        letter-spacing: 3px;
+        font-size: 0.95rem;
+        letter-spacing: 4px;
         margin-bottom: 1.5rem;
+        font-weight: 400;
+        background: rgba(255,255,255,0.03);
+        padding: 0.5rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255,255,255,0.03);
+        display: inline-block;
+        margin-left: auto;
+        margin-right: auto;
+        width: auto;
+        padding: 0.6rem 2rem;
     }
     
+    /* Glassmorphism Warning */
     .warning-box {
-        background: rgba(255, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 0, 0, 0.2);
-        padding: 1rem;
-        border-radius: 15px;
+        background: rgba(255, 0, 0, 0.08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 0, 0, 0.15);
+        padding: 1.2rem;
+        border-radius: 16px;
         color: #ff6b6b;
         text-align: center;
         margin-bottom: 2rem;
         font-weight: 600;
         letter-spacing: 1px;
-        box-shadow: 0 8px 32px rgba(255, 0, 0, 0.1);
+        box-shadow: 0 8px 40px rgba(255, 0, 0, 0.08);
+        transition: all 0.3s ease;
     }
     
     .warning-box:hover {
-        border-color: #ff6b6b;
-        box-shadow: 0 8px 40px rgba(255, 0, 0, 0.2);
-        transition: 0.3s;
+        border-color: rgba(255, 0, 0, 0.3);
+        box-shadow: 0 8px 50px rgba(255, 0, 0, 0.15);
+        transform: scale(1.01);
     }
     
+    /* Premium Result Cards */
     .result-card {
         background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 1.2rem;
-        border-radius: 15px;
+        padding: 1.2rem 1.5rem;
+        border-radius: 16px;
         margin: 0.7rem 0;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border-left: 3px solid transparent;
-        background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05));
+        border-left: 4px solid transparent;
+        background: linear-gradient(135deg, rgba(255,255,255,0.015), rgba(255,255,255,0.035));
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .result-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.02), rgba(123, 47, 252, 0.02));
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
+    .result-card:hover::before {
+        opacity: 1;
     }
     
     .result-card:hover {
-        transform: translateX(15px) scale(1.01);
+        transform: translateX(12px) scale(1.008);
         border-left-color: #00d4ff;
-        background: rgba(0, 212, 255, 0.05);
-        box-shadow: 0 10px 40px rgba(0, 212, 255, 0.1);
+        background: rgba(0, 212, 255, 0.04);
+        box-shadow: 0 10px 50px rgba(0, 212, 255, 0.06);
     }
     
     .result-card a {
@@ -340,11 +385,13 @@ st.markdown("""
         text-decoration: none;
         font-weight: 400;
         transition: 0.3s;
+        position: relative;
+        z-index: 1;
     }
     
     .result-card a:hover {
         color: #7b2ffc !important;
-        text-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
+        text-shadow: 0 0 25px rgba(123, 47, 252, 0.25);
     }
     
     .result-card strong {
@@ -352,9 +399,12 @@ st.markdown("""
         font-weight: 600;
         font-size: 1.05rem;
         display: block;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.25rem;
+        position: relative;
+        z-index: 1;
     }
     
+    /* Premium Buttons */
     .stButton button {
         width: 100%;
         background: linear-gradient(135deg, #00d4ff, #7b2ffc);
@@ -362,186 +412,250 @@ st.markdown("""
         font-weight: 700;
         font-size: 1.1rem;
         border: none;
-        padding: 0.8rem;
-        border-radius: 12px;
+        padding: 0.85rem;
+        border-radius: 14px;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
-        letter-spacing: 1px;
+        box-shadow: 0 4px 25px rgba(0, 212, 255, 0.2);
+        letter-spacing: 1.5px;
         text-transform: uppercase;
         font-family: 'Inter', sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stButton button::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
+    .stButton button:hover::after {
+        opacity: 1;
     }
     
     .stButton button:hover {
         transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 40px rgba(0, 212, 255, 0.4);
+        box-shadow: 0 8px 45px rgba(0, 212, 255, 0.35);
     }
     
     .stButton button:active {
-        transform: translateY(0px) scale(0.98);
+        transform: translateY(0px) scale(0.97);
     }
     
     .stDownloadButton button {
         background: linear-gradient(135deg, #00b894, #00a381) !important;
-        box-shadow: 0 4px 20px rgba(0, 184, 148, 0.2) !important;
+        box-shadow: 0 4px 25px rgba(0, 184, 148, 0.2) !important;
         font-weight: 600 !important;
     }
     
     .stDownloadButton button:hover {
-        box-shadow: 0 8px 40px rgba(0, 184, 148, 0.4) !important;
+        box-shadow: 0 8px 45px rgba(0, 184, 148, 0.35) !important;
         transform: translateY(-3px);
     }
     
+    /* Premium Sidebar */
     .css-1d391kg {
         background: rgba(10, 10, 15, 0.95);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        border-right: 1px solid rgba(255, 255, 255, 0.03);
     }
     
+    /* Cyber Logs */
     .log-container {
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
         padding: 1.2rem;
-        border-radius: 15px;
+        border-radius: 16px;
         max-height: 350px;
         overflow-y: auto;
         font-family: 'Courier New', monospace;
         font-size: 0.85rem;
-        border: 1px solid rgba(0, 212, 255, 0.1);
-        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(0, 212, 255, 0.08);
+        box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+        scrollbar-width: thin;
+        scrollbar-color: #00d4ff transparent;
     }
     
-    .log-container::-webkit-scrollbar {
-        width: 5px;
-    }
+    .log-container::-webkit-scrollbar { width: 5px; }
+    .log-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+    .log-container::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #00d4ff, #7b2ffc); border-radius: 10px; }
     
-    .log-container::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-    }
-    
-    .log-container::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #00d4ff, #7b2ffc);
-        border-radius: 10px;
-    }
-    
-    .log-success { color: #00d4ff; text-shadow: 0 0 10px rgba(0, 212, 255, 0.2); }
-    .log-error { color: #ff006e; text-shadow: 0 0 10px rgba(255, 0, 110, 0.2); }
+    .log-success { color: #00d4ff; text-shadow: 0 0 15px rgba(0, 212, 255, 0.15); }
+    .log-error { color: #ff006e; text-shadow: 0 0 15px rgba(255, 0, 110, 0.15); }
     .log-info { color: #8888ff; }
-    .log-warning { color: #ffd93d; text-shadow: 0 0 10px rgba(255, 217, 61, 0.2); }
+    .log-warning { color: #ffd93d; text-shadow: 0 0 15px rgba(255, 217, 61, 0.15); }
     
+    /* Watermark */
     .watermark {
         position: fixed;
-        bottom: 15px;
-        right: 20px;
-        opacity: 0.08;
-        font-size: 14px;
+        bottom: 20px;
+        right: 25px;
+        opacity: 0.06;
+        font-size: 16px;
         color: #00d4ff;
         pointer-events: none;
         z-index: 999;
         font-family: 'Orbitron', sans-serif;
-        letter-spacing: 3px;
+        letter-spacing: 4px;
+        font-weight: 700;
     }
     
+    /* Premium Progress */
     .stProgress .st-ba {
         background: linear-gradient(90deg, #00d4ff, #7b2ffc, #ff006e) !important;
-        border-radius: 10px;
+        border-radius: 12px;
         height: 8px !important;
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
     }
     
     .stProgress .st-bg {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border-radius: 12px;
     }
     
+    /* Premium Footer */
     .footer {
         text-align: center;
         color: #444;
-        padding: 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.03);
-        margin-top: 2rem;
-    }
-    
-    .footer a {
-        color: #00d4ff !important;
-        text-decoration: none;
-        transition: 0.3s;
-    }
-    
-    .footer a:hover {
-        color: #7b2ffc !important;
-        text-shadow: 0 0 20px rgba(123, 47, 252, 0.3);
+        padding: 2.5rem 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.02);
+        margin-top: 2.5rem;
+        background: rgba(0,0,0,0.2);
+        border-radius: 20px 20px 0 0;
     }
     
     .footer .brand {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         background: linear-gradient(135deg, #00d4ff, #7b2ffc);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-weight: 700;
+        font-weight: 800;
         font-family: 'Orbitron', sans-serif;
+        letter-spacing: 2px;
     }
     
+    .footer a { color: #00d4ff !important; text-decoration: none; transition: 0.3s; }
+    .footer a:hover { color: #7b2ffc !important; text-shadow: 0 0 25px rgba(123, 47, 252, 0.2); }
+    
+    /* Premium Inputs */
     .stTextInput > div > div > input {
         background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.05) !important;
-        border-radius: 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 14px !important;
         color: white !important;
-        padding: 0.8rem !important;
+        padding: 0.9rem 1.2rem !important;
         font-size: 1rem !important;
-        transition: 0.3s !important;
+        transition: all 0.3s ease !important;
+        font-family: 'Inter', sans-serif;
     }
     
     .stTextInput > div > div > input:focus {
         border-color: #00d4ff !important;
-        box-shadow: 0 0 30px rgba(0, 212, 255, 0.1) !important;
+        box-shadow: 0 0 40px rgba(0, 212, 255, 0.06), inset 0 0 40px rgba(0, 212, 255, 0.02) !important;
     }
     
-    .stTextInput > div > div > input::placeholder {
-        color: #555 !important;
-    }
+    .stTextInput > div > div > input::placeholder { color: #444 !important; font-weight: 300; }
     
+    /* Premium Metrics */
     .stMetric {
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 15px;
-        padding: 1rem;
-        transition: 0.3s;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 16px;
+        padding: 1.2rem;
+        transition: all 0.3s ease;
     }
     
     .stMetric:hover {
-        border-color: #00d4ff;
-        box-shadow: 0 4px 30px rgba(0, 212, 255, 0.1);
+        border-color: rgba(0, 212, 255, 0.15);
+        box-shadow: 0 4px 35px rgba(0, 212, 255, 0.04);
     }
     
+    .stMetric label { color: #888 !important; font-weight: 400; }
+    .stMetric .stMetricValue { color: #fff !important; font-weight: 700; }
+    
+    /* History Cards */
     .history-card {
         background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 0.8rem;
-        border-radius: 12px;
-        margin: 0.4rem 0;
-        transition: 0.3s;
-        border-left: 2px solid transparent;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        padding: 0.8rem 1rem;
+        border-radius: 14px;
+        margin: 0.5rem 0;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
     }
     
     .history-card:hover {
         border-left-color: #00d4ff;
         background: rgba(0, 212, 255, 0.03);
+        transform: translateX(4px);
     }
     
+    .history-card strong { color: #fff; font-weight: 600; }
+    .history-card span { color: #444; font-size: 0.7rem; }
+    .history-card .count { color: #00d4ff; font-size: 0.85rem; font-weight: 600; }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-radius: 14px !important;
+        color: #aaa !important;
+        border: 1px solid rgba(255, 255, 255, 0.04) !important;
+        font-weight: 500 !important;
+        transition: 0.3s ease !important;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        border-color: rgba(0, 212, 255, 0.15) !important;
+        background: rgba(0, 212, 255, 0.02) !important;
+    }
+    
+    /* QR Container */
+    .qr-container {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px);
+        padding: 1rem;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        transition: 0.3s ease;
+    }
+    
+    .qr-container:hover {
+        border-color: rgba(0, 212, 255, 0.15);
+        box-shadow: 0 4px 30px rgba(0, 212, 255, 0.04);
+    }
+    
+    /* Sidebar Title */
+    .sidebar-title {
+        color: #666;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: 700;
+        margin: 1rem 0 0.8rem 0;
+        opacity: 0.7;
+    }
+    
+    /* Upload Box */
     .upload-box {
-        border: 2px dashed rgba(0, 212, 255, 0.2);
-        border-radius: 15px;
+        border: 2px dashed rgba(0, 212, 255, 0.1);
+        border-radius: 16px;
         padding: 1.5rem;
         text-align: center;
-        background: rgba(255, 255, 255, 0.02);
-        transition: 0.3s;
+        background: rgba(255, 255, 255, 0.01);
+        transition: 0.3s ease;
     }
     
     .upload-box:hover {
-        border-color: #00d4ff;
-        background: rgba(0, 212, 255, 0.05);
+        border-color: rgba(0, 212, 255, 0.2);
+        background: rgba(0, 212, 255, 0.02);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -553,7 +667,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ========== HEADER ==========
+# ========== HEADER WITH LOGO ==========
 col_logo, col_header = st.columns([1, 4])
 
 with col_logo:
@@ -564,15 +678,17 @@ with col_logo:
 
 with col_header:
     st.markdown(f"""
-    <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 0.5rem 0;">
         <div class="main-header">
             {T['title']}
         </div>
         <div class="sub-header">
             {T['subtitle']}
         </div>
-        <div class="tagline">
-            {T['tagline']}
+        <div style="text-align: center;">
+            <div class="tagline">
+                {T['tagline']}
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -591,14 +707,15 @@ with st.sidebar:
         width=60
     )
     st.markdown(f"""
-    <div style="text-align: center; padding: 0.3rem 0; margin-bottom: 0.5rem;">
-        <div style="font-weight: 700; font-size: 1.1rem; 
+    <div style="text-align: center; padding: 0.5rem 0; margin-bottom: 0.5rem;">
+        <div style="font-weight: 700; font-size: 1.2rem; 
                      background: linear-gradient(135deg, #00d4ff, #7b2ffc);
                      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                     font-family: 'Orbitron', sans-serif;">
+                     font-family: 'Orbitron', sans-serif; letter-spacing: 1px;">
             {T['title']}
         </div>
-        <div style="color: #444; font-size: 0.7rem; letter-spacing: 2px;">v2.0 • Professional</div>
+        <div style="color: #444; font-size: 0.7rem; letter-spacing: 3px;">v3.0 • Professional</div>
+        <div style="color: #333; font-size: 0.6rem; margin-top: 0.2rem; letter-spacing: 1px;">⚡ 1000+ Platforms</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -611,9 +728,9 @@ with st.sidebar:
         for username, timestamp, count in recent_scans:
             st.markdown(f"""
             <div class="history-card">
-                <strong style="color: #fff;">{username}</strong><br>
-                <span style="color: #444; font-size: 0.7rem;">{timestamp}</span><br>
-                <span style="color: #00d4ff; font-size: 0.8rem;">Found: {count} profiles</span>
+                <strong>{username}</strong><br>
+                <span>{timestamp}</span><br>
+                <span class="count">Found: {count} profiles</span>
             </div>
             """, unsafe_allow_html=True)
     else:
@@ -621,10 +738,10 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Features
+    # ===== FEATURES =====
     st.markdown(f'<div class="sidebar-title">🚀 Features</div>', unsafe_allow_html=True)
     features = [
-        ("🔍", "50+ Platforms"),
+        ("🔍", "1000+ Platforms"),
         ("📊", "Real-time Analytics"),
         ("🌍", "GeoIP Location"),
         ("📱", "QR Code Generator"),
@@ -638,10 +755,20 @@ with st.sidebar:
         st.markdown(f"<div style='color: #888; font-size: 0.85rem; padding: 0.2rem 0;'>{icon} {text}</div>", unsafe_allow_html=True)
     
     st.markdown("---")
+    
+    # ===== STATS =====
+    st.markdown(f'<div class="sidebar-title">📊 Live Stats</div>', unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("🖥️ Sites", "1,000+", delta=None)
+    with col2:
+        st.metric("🌍 Regions", "50+", delta=None)
+    
+    st.markdown("---")
     st.markdown(f"""
-    <div style="text-align: center; color: #333; font-size: 0.7rem; letter-spacing: 1px;">
+    <div style="text-align: center; color: #333; font-size: 0.7rem; letter-spacing: 1px; padding: 0.5rem 0;">
         Made with ❤️<br>
-        <span style="color: #222;">Python + Streamlit</span>
+        <span style="color: #222; font-weight: 600;">Python + Streamlit</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -649,21 +776,24 @@ with st.sidebar:
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.markdown(f"""
-    <div style="text-align: center; font-size: 1.3rem; font-weight: 600; 
+    <div style="text-align: center; font-size: 1.4rem; font-weight: 700; 
                  background: linear-gradient(135deg, #00d4ff, #7b2ffc);
                  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                 margin-bottom: 1rem;">
+                 margin-bottom: 1.2rem; letter-spacing: 2px;">
         {T['enter_details']}
     </div>
     """, unsafe_allow_html=True)
     
-    # ===== FILE UPLOAD SECTION =====
+    # ===== FILE UPLOAD =====
     with st.expander("📂 " + T['file_upload']):
+        st.markdown('<div class="upload-box">', unsafe_allow_html=True)
         uploaded_file = st.file_uploader(
             T['file_upload_help'],
             type=['txt', 'csv'],
-            accept_multiple_files=False
+            accept_multiple_files=False,
+            label_visibility="visible"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
         
         if uploaded_file:
             try:
@@ -671,13 +801,11 @@ with col2:
                 usernames = [line.strip() for line in content.splitlines() if line.strip()]
                 st.success(f"✅ Found {len(usernames)} usernames in file!")
                 st.write("**Usernames:**", ", ".join(usernames[:10]) + ("..." if len(usernames) > 10 else ""))
-                
-                # Store in session state
                 st.session_state.uploaded_usernames = usernames
             except Exception as e:
                 st.error(f"Error reading file: {str(e)}")
     
-    st.markdown(f"<div style='text-align: center; color: #444; margin: 0.5rem 0;'>—— {T['or']} ——</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align: center; color: #444; margin: 0.5rem 0; font-weight: 300;'>—— {T['or']} ——</div>", unsafe_allow_html=True)
     
     with st.form("scan_form"):
         username = st.text_input(
@@ -722,7 +850,7 @@ def run_scan(username, email="", lang="English"):
     results = {}
     logs = []
     total_found = 0
-    total_sites = 55
+    total_sites = len(scanner.SITES) if hasattr(scanner, 'SITES') else 1000
     
     with log_container:
         st.markdown(f"""
@@ -847,7 +975,7 @@ def run_scan(username, email="", lang="English"):
             pdf_bytes = None
             add_log("PDF generation failed", "error")
         
-        # ===== QR CODES (UPDATED - In-Memory) =====
+        # ===== QR CODES (FIXED) =====
         add_log("Generating QR codes...", "info")
         progress_text.text(T['generating_qr'])
         progress_bar.progress(80)
@@ -859,12 +987,15 @@ def run_scan(username, email="", lang="English"):
         for site, url in results.items():
             if count >= 10:
                 break
-            # generate_qr() now returns PIL Image
-            qr_img = qr_gen.generate_qr(url)
-            # get_qr_bytes() for download
-            qr_bytes = qr_gen.get_qr_bytes(url)
-            qr_items.append((site, qr_img, qr_bytes))
-            count += 1
+            try:
+                # generate_qr() returns numpy array for st.image
+                qr_img = qr_gen.generate_qr(url)
+                # get_qr_bytes() for download
+                qr_bytes = qr_gen.get_qr_bytes(url)
+                qr_items.append((site, qr_img, qr_bytes))
+                count += 1
+            except Exception as e:
+                add_log(f"QR generation failed for {site}: {str(e)}", "warning")
         
         add_log(f"Generated {len(qr_items)} QR codes", "success")
         
@@ -875,7 +1006,7 @@ def run_scan(username, email="", lang="English"):
             for idx, (site, qr_img, qr_bytes) in enumerate(qr_items):
                 with qr_cols[idx % 5]:
                     st.markdown(f"**{site}**")
-                    st.image(qr_img, use_container_width=True)  # PIL Image works
+                    st.image(qr_img, use_container_width=True)
                     st.download_button(
                         label="📥 QR",
                         data=qr_bytes,
@@ -927,7 +1058,8 @@ def run_scan(username, email="", lang="English"):
                 fig_pie.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
-                    font_color='white'
+                    font_color='white',
+                    font_family='Inter, sans-serif'
                 )
                 st.plotly_chart(fig_pie, use_container_width=True)
         
@@ -961,6 +1093,7 @@ def run_scan(username, email="", lang="English"):
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
                         font_color='white',
+                        font_family='Inter, sans-serif',
                         geo=dict(
                             showland=True,
                             landcolor='#1a1a2e',
@@ -1056,7 +1189,7 @@ def run_scan(username, email="", lang="English"):
         with col1:
             st.metric(f"⏱️ {T['scan_time']}", f"{scan_duration:.2f}s")
         with col2:
-            st.metric(f"📊 {T['sites_scanned']}", total_sites)
+            st.metric(f"📊 {T['sites_scanned']}", len(scanner.SITES) if hasattr(scanner, 'SITES') else "1000+")
         with col3:
             st.metric(f"✅ {T['profiles_found']}", total_found)
         with col4:
@@ -1093,7 +1226,7 @@ if 'uploaded_usernames' in st.session_state and st.session_state.uploaded_userna
 # ========== FOOTER ==========
 st.markdown(f"""
 <div class="footer">
-    <div class="brand">◆ {T['title']} v2.0 ◆</div>
+    <div class="brand">◆ {T['title']} v3.0 ◆</div>
     <div style="color: #444; margin-top: 0.5rem; font-size: 0.9rem;">
         Made with ❤️ using Python & Streamlit | 
         <a href="#">GitHub</a> | 
@@ -1102,7 +1235,7 @@ st.markdown(f"""
     <div style="color: #333; margin-top: 0.5rem; font-size: 0.8rem;">
         ⚠️ For Educational Purposes Only | Ethical Hacking Tool
     </div>
-    <div style="color: #222; margin-top: 0.3rem; font-size: 0.7rem;">
+    <div style="color: #222; margin-top: 0.3rem; font-size: 0.7rem; letter-spacing: 2px;">
         © 2026 OSINT Bomber. All rights reserved.
     </div>
 </div>
