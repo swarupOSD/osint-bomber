@@ -242,19 +242,12 @@ init_db()
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap');
-    
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    .stApp {
-        background: #0a0a0f;
-        font-family: 'Inter', sans-serif;
-    }
-    
+    .stApp { background: #0a0a0f; font-family: 'Inter', sans-serif; }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Glowing Header */
     .main-header {
         font-size: 4.2rem;
         font-weight: 900;
@@ -269,7 +262,6 @@ st.markdown("""
         animation: glowPulse 4s ease-in-out infinite;
         position: relative;
     }
-    
     .main-header::after {
         content: '';
         position: absolute;
@@ -280,13 +272,11 @@ st.markdown("""
         height: 2px;
         background: linear-gradient(90deg, transparent, #00d4ff, #7b2ffc, #ff006e, transparent);
     }
-    
     @keyframes glowPulse {
         0% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.15); }
         50% { text-shadow: 0 0 70px rgba(123, 47, 252, 0.35), 0 0 100px rgba(255, 0, 110, 0.15); }
         100% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.15); }
     }
-    
     .sub-header {
         text-align: center;
         color: #8888aa;
@@ -299,7 +289,6 @@ st.markdown("""
         font-family: 'Orbitron', sans-serif;
         opacity: 0.8;
     }
-    
     .tagline {
         text-align: center;
         color: #556;
@@ -317,8 +306,6 @@ st.markdown("""
         width: auto;
         padding: 0.6rem 2rem;
     }
-    
-    /* Glassmorphism Warning */
     .warning-box {
         background: rgba(255, 0, 0, 0.08);
         backdrop-filter: blur(12px);
@@ -334,14 +321,11 @@ st.markdown("""
         box-shadow: 0 8px 40px rgba(255, 0, 0, 0.08);
         transition: all 0.3s ease;
     }
-    
     .warning-box:hover {
         border-color: rgba(255, 0, 0, 0.3);
         box-shadow: 0 8px 50px rgba(255, 0, 0, 0.15);
         transform: scale(1.01);
     }
-    
-    /* Premium Result Cards */
     .result-card {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(12px);
@@ -356,7 +340,6 @@ st.markdown("""
         position: relative;
         overflow: hidden;
     }
-    
     .result-card::before {
         content: '';
         position: absolute;
@@ -368,43 +351,17 @@ st.markdown("""
         opacity: 0;
         transition: opacity 0.4s ease;
     }
-    
-    .result-card:hover::before {
-        opacity: 1;
-    }
-    
+    .result-card:hover::before { opacity: 1; }
     .result-card:hover {
         transform: translateX(12px) scale(1.008);
         border-left-color: #00d4ff;
         background: rgba(0, 212, 255, 0.04);
         box-shadow: 0 10px 50px rgba(0, 212, 255, 0.06);
     }
+    .result-card a { color: #00d4ff !important; text-decoration: none; font-weight: 400; transition: 0.3s; position: relative; z-index: 1; }
+    .result-card a:hover { color: #7b2ffc !important; text-shadow: 0 0 25px rgba(123, 47, 252, 0.25); }
+    .result-card strong { color: #fff; font-weight: 600; font-size: 1.05rem; display: block; margin-bottom: 0.25rem; position: relative; z-index: 1; }
     
-    .result-card a {
-        color: #00d4ff !important;
-        text-decoration: none;
-        font-weight: 400;
-        transition: 0.3s;
-        position: relative;
-        z-index: 1;
-    }
-    
-    .result-card a:hover {
-        color: #7b2ffc !important;
-        text-shadow: 0 0 25px rgba(123, 47, 252, 0.25);
-    }
-    
-    .result-card strong {
-        color: #fff;
-        font-weight: 600;
-        font-size: 1.05rem;
-        display: block;
-        margin-bottom: 0.25rem;
-        position: relative;
-        z-index: 1;
-    }
-    
-    /* Premium Buttons */
     .stButton button {
         width: 100%;
         background: linear-gradient(135deg, #00d4ff, #7b2ffc);
@@ -422,7 +379,6 @@ st.markdown("""
         position: relative;
         overflow: hidden;
     }
-    
     .stButton button::after {
         content: '';
         position: absolute;
@@ -434,40 +390,19 @@ st.markdown("""
         opacity: 0;
         transition: opacity 0.4s ease;
     }
-    
-    .stButton button:hover::after {
-        opacity: 1;
-    }
-    
-    .stButton button:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 45px rgba(0, 212, 255, 0.35);
-    }
-    
-    .stButton button:active {
-        transform: translateY(0px) scale(0.97);
-    }
+    .stButton button:hover::after { opacity: 1; }
+    .stButton button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 45px rgba(0, 212, 255, 0.35); }
+    .stButton button:active { transform: translateY(0px) scale(0.97); }
     
     .stDownloadButton button {
         background: linear-gradient(135deg, #00b894, #00a381) !important;
         box-shadow: 0 4px 25px rgba(0, 184, 148, 0.2) !important;
         font-weight: 600 !important;
     }
+    .stDownloadButton button:hover { box-shadow: 0 8px 45px rgba(0, 184, 148, 0.35) !important; transform: translateY(-3px); }
     
-    .stDownloadButton button:hover {
-        box-shadow: 0 8px 45px rgba(0, 184, 148, 0.35) !important;
-        transform: translateY(-3px);
-    }
+    .css-1d391kg { background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.03); }
     
-    /* Premium Sidebar */
-    .css-1d391kg {
-        background: rgba(10, 10, 15, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    
-    /* Cyber Logs */
     .log-container {
         background: rgba(0, 0, 0, 0.6);
         padding: 1.2rem;
@@ -481,17 +416,14 @@ st.markdown("""
         scrollbar-width: thin;
         scrollbar-color: #00d4ff transparent;
     }
-    
     .log-container::-webkit-scrollbar { width: 5px; }
     .log-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
     .log-container::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #00d4ff, #7b2ffc); border-radius: 10px; }
-    
     .log-success { color: #00d4ff; text-shadow: 0 0 15px rgba(0, 212, 255, 0.15); }
     .log-error { color: #ff006e; text-shadow: 0 0 15px rgba(255, 0, 110, 0.15); }
     .log-info { color: #8888ff; }
     .log-warning { color: #ffd93d; text-shadow: 0 0 15px rgba(255, 217, 61, 0.15); }
     
-    /* Watermark */
     .watermark {
         position: fixed;
         bottom: 20px;
@@ -506,20 +438,14 @@ st.markdown("""
         font-weight: 700;
     }
     
-    /* Premium Progress */
     .stProgress .st-ba {
         background: linear-gradient(90deg, #00d4ff, #7b2ffc, #ff006e) !important;
         border-radius: 12px;
         height: 8px !important;
         box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
     }
+    .stProgress .st-bg { background: rgba(255, 255, 255, 0.03) !important; border-radius: 12px; }
     
-    .stProgress .st-bg {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border-radius: 12px;
-    }
-    
-    /* Premium Footer */
     .footer {
         text-align: center;
         color: #444;
@@ -529,7 +455,6 @@ st.markdown("""
         background: rgba(0,0,0,0.2);
         border-radius: 20px 20px 0 0;
     }
-    
     .footer .brand {
         font-size: 1.4rem;
         background: linear-gradient(135deg, #00d4ff, #7b2ffc);
@@ -539,11 +464,9 @@ st.markdown("""
         font-family: 'Orbitron', sans-serif;
         letter-spacing: 2px;
     }
-    
     .footer a { color: #00d4ff !important; text-decoration: none; transition: 0.3s; }
     .footer a:hover { color: #7b2ffc !important; text-shadow: 0 0 25px rgba(123, 47, 252, 0.2); }
     
-    /* Premium Inputs */
     .stTextInput > div > div > input {
         background: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid rgba(255, 255, 255, 0.06) !important;
@@ -554,15 +477,12 @@ st.markdown("""
         transition: all 0.3s ease !important;
         font-family: 'Inter', sans-serif;
     }
-    
     .stTextInput > div > div > input:focus {
         border-color: #00d4ff !important;
         box-shadow: 0 0 40px rgba(0, 212, 255, 0.06), inset 0 0 40px rgba(0, 212, 255, 0.02) !important;
     }
-    
     .stTextInput > div > div > input::placeholder { color: #444 !important; font-weight: 300; }
     
-    /* Premium Metrics */
     .stMetric {
         background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(10px);
@@ -571,16 +491,13 @@ st.markdown("""
         padding: 1.2rem;
         transition: all 0.3s ease;
     }
-    
     .stMetric:hover {
         border-color: rgba(0, 212, 255, 0.15);
         box-shadow: 0 4px 35px rgba(0, 212, 255, 0.04);
     }
-    
     .stMetric label { color: #888 !important; font-weight: 400; }
     .stMetric .stMetricValue { color: #fff !important; font-weight: 700; }
     
-    /* History Cards */
     .history-card {
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.03);
@@ -590,18 +507,15 @@ st.markdown("""
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
     }
-    
     .history-card:hover {
         border-left-color: #00d4ff;
         background: rgba(0, 212, 255, 0.03);
         transform: translateX(4px);
     }
-    
     .history-card strong { color: #fff; font-weight: 600; }
     .history-card span { color: #444; font-size: 0.7rem; }
     .history-card .count { color: #00d4ff; font-size: 0.85rem; font-weight: 600; }
     
-    /* Expander */
     .streamlit-expanderHeader {
         background: rgba(255, 255, 255, 0.02) !important;
         border-radius: 14px !important;
@@ -610,13 +524,11 @@ st.markdown("""
         font-weight: 500 !important;
         transition: 0.3s ease !important;
     }
-    
     .streamlit-expanderHeader:hover {
         border-color: rgba(0, 212, 255, 0.15) !important;
         background: rgba(0, 212, 255, 0.02) !important;
     }
     
-    /* QR Container */
     .qr-container {
         background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(8px);
@@ -626,13 +538,11 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.04);
         transition: 0.3s ease;
     }
-    
     .qr-container:hover {
         border-color: rgba(0, 212, 255, 0.15);
         box-shadow: 0 4px 30px rgba(0, 212, 255, 0.04);
     }
     
-    /* Sidebar Title */
     .sidebar-title {
         color: #666;
         font-size: 0.75rem;
@@ -642,8 +552,6 @@ st.markdown("""
         margin: 1rem 0 0.8rem 0;
         opacity: 0.7;
     }
-    
-    /* Upload Box */
     .upload-box {
         border: 2px dashed rgba(0, 212, 255, 0.1);
         border-radius: 16px;
@@ -652,7 +560,6 @@ st.markdown("""
         background: rgba(255, 255, 255, 0.01);
         transition: 0.3s ease;
     }
-    
     .upload-box:hover {
         border-color: rgba(0, 212, 255, 0.2);
         background: rgba(0, 212, 255, 0.02);
@@ -850,7 +757,7 @@ def run_scan(username, email="", lang="English"):
     results = {}
     logs = []
     total_found = 0
-    total_sites = len(scanner.SITES) if hasattr(scanner, 'SITES') else 1000
+    total_sites = 1000  # FIXED: সরাসরি ১০০০ সেট করা হয়েছে
     
     with log_container:
         st.markdown(f"""
@@ -988,10 +895,8 @@ def run_scan(username, email="", lang="English"):
             if count >= 10:
                 break
             try:
-                # generate_qr() returns numpy array for st.image
-                qr_img = qr_gen.generate_qr(url)
-                # get_qr_bytes() for download
-                qr_bytes = qr_gen.get_qr_bytes(url)
+                qr_img = qr_gen.generate_qr(url)  # numpy array for st.image
+                qr_bytes = qr_gen.get_qr_bytes(url)  # bytes for download
                 qr_items.append((site, qr_img, qr_bytes))
                 count += 1
             except Exception as e:
@@ -1189,7 +1094,7 @@ def run_scan(username, email="", lang="English"):
         with col1:
             st.metric(f"⏱️ {T['scan_time']}", f"{scan_duration:.2f}s")
         with col2:
-            st.metric(f"📊 {T['sites_scanned']}", len(scanner.SITES) if hasattr(scanner, 'SITES') else "1000+")
+            st.metric(f"📊 {T['sites_scanned']}", total_sites)
         with col3:
             st.metric(f"✅ {T['profiles_found']}", total_found)
         with col4:
